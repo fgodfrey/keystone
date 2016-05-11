@@ -12,6 +12,7 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 from __future__ import absolute_import
+import copy
 import uuid
 
 import ldap.filter
@@ -156,10 +157,20 @@ class Identity(identity.IdentityDriverV8):
         user_dn = user_ref['dn']
         self.group.remove_user(user_dn, group_id, user_id)
 
+    dn_group_cache = {}
     def list_groups_for_user(self, user_id, hints):
+        print "list_groups_for_user - user_id = " + str(user_id)
         user_ref = self._get_user(user_id)
         user_dn = user_ref['dn']
-        return self.group.list_user_groups_filtered(user_dn, hints)
+
+        if user_dn in self.dn_group_cache:
+            print "    returning cached - " + str(self.dn_group_cache[user_dn])
+            return copy.deepcopy(self.dn_group_cache[user_dn])
+
+        ret = self.group.list_user_groups_filtered(user_dn, hints)
+        self.dn_group_cache[user_dn] = copy.deepcopy(ret)
+        print "    returning uncached - " + str(self.dn_group_cache[user_dn])
+        return ret
 
     def list_groups(self, hints):
         return self.group.get_all_filtered(hints)
