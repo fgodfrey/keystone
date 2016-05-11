@@ -31,9 +31,6 @@ from keystone import exception
 from keystone.i18n import _
 from keystone.i18n import _LW
 
-#XXX REMOVE THIS
-import traceback
-
 
 LOG = log.getLogger(__name__)
 
@@ -1457,8 +1454,6 @@ class BaseLdap(object):
             return None
 
     def _ldap_get_all(self, ldap_filter=None):
-        print "_ldap_get_all called"
-        traceback.print_stack()
         query = u'(&%s(objectClass=%s)(%s=*))' % (
             ldap_filter or self.ldap_filter or '',
             self.object_class,
@@ -1492,28 +1487,21 @@ class BaseLdap(object):
 
     ldap_object_cache = {}
     def get(self, object_id, ldap_filter=None):
-        print "ldap_get - object_id = " + str(object_id) + " filter = " + str(filter)
-
         if object_id in self.ldap_object_cache:
-            print "    Found cached"
             res = self.ldap_object_cache[object_id]
         else:
-            print "    Finding uncached"
             res = self._ldap_get(object_id, ldap_filter)
 
         if res is None:
             raise self._not_found(object_id)
         else:
             self.ldap_object_cache[object_id] = res 
-            print "    returning: " + str(res)
             return self._ldap_res_to_model(res)
 
     ldap_cache_by_name = {}
     def get_by_name(self, name, ldap_filter=None):
-        print "get_by_name: name = " + str(name)
         if name in self.ldap_cache_by_name:
             res = [copy.deepcopy(self.ldap_cache_by_name[name])]
-            print "    returning cached: " + str(res[0])
         else:
             query = (u'(%s=%s)' % (self.attribute_mapping['name'],
                                ldap.filter.escape_filter_chars(
@@ -1899,10 +1887,7 @@ class EnabledEmuMixIn(BaseLdap):
 
     ldap_object_cache = {}
     def get(self, object_id, ldap_filter=None):
-	print "ldap_get_mixin - object_id = " + str(object_id) + " filter = " + str(ldap_filter)
-
 	if object_id in self.ldap_object_cache:
-            print "    Returning cached - " + str(self.ldap_object_cache[object_id])
             return copy.deepcopy(self.ldap_object_cache[object_id])
 
         with self.get_connection() as conn:
@@ -1910,7 +1895,6 @@ class EnabledEmuMixIn(BaseLdap):
             if ('enabled' not in self.attribute_ignore and
                     self.enabled_emulation):
                 ref['enabled'] = self._get_enabled(object_id, conn)
-            print "    Returning uncached - " + str(ref)
             self.ldap_object_cache[object_id] = copy.deepcopy(ref)
             return ref
 

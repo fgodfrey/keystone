@@ -159,17 +159,14 @@ class Identity(identity.IdentityDriverV8):
 
     dn_group_cache = {}
     def list_groups_for_user(self, user_id, hints):
-        print "list_groups_for_user - user_id = " + str(user_id)
         user_ref = self._get_user(user_id)
         user_dn = user_ref['dn']
 
         if user_dn in self.dn_group_cache:
-            print "    returning cached - " + str(self.dn_group_cache[user_dn])
             return copy.deepcopy(self.dn_group_cache[user_dn])
 
         ret = self.group.list_user_groups_filtered(user_dn, hints)
         self.dn_group_cache[user_dn] = copy.deepcopy(ret)
-        print "    returning uncached - " + str(self.dn_group_cache[user_dn])
         return ret
 
     def list_groups(self, hints):
