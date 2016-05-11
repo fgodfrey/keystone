@@ -1,47 +1,9 @@
 ==================
-OpenStack Keystone
+OpenStack Keystone LDAP Cache
 ==================
 
-Keystone provides authentication, authorization and service discovery
-mechanisms via HTTP primarily for use by projects in the OpenStack family. It
-is most commonly deployed as an HTTP interface to existing identity systems,
-such as LDAP.
+This repository is a fork of the real OpenStack Keystone repo.  Please check that repo out if you are looking for official code.
 
-Developer documentation, the source of which is in ``doc/source/``, is
-published at:
+This repository contains the liberty-ldap-cache branch, which is branched from stable/liberty for the purposes of implementing an LDAP cache.  This cache is somewhat basic and assumes that, other than authentication, once an LDAP record is known, it won't change (or be deleted).  So, obviously, there's a lot to improve.
 
-    http://docs.openstack.org/developer/keystone/
-
-The API specification and documentation are available at:
-
-    http://specs.openstack.org/openstack/keystone-specs/
-
-The canonical client library is available at:
-
-    https://git.openstack.org/cgit/openstack/python-keystoneclient
-
-Documentation for cloud administrators is available at:
-
-    http://docs.openstack.org/
-
-The source of documentation for cloud administrators is available at:
-
-    https://git.openstack.org/cgit/openstack/openstack-manuals
-
-Information about our team meeting is available at:
-
-    https://wiki.openstack.org/wiki/Meetings/KeystoneMeeting
-
-Bugs and feature requests are tracked on Launchpad at:
-
-    https://bugs.launchpad.net/keystone
-
-Future design work is tracked at:
-
-    http://specs.openstack.org/openstack/keystone-specs/#identity-program-specifications
-
-Contributors are encouraged to join IRC (``#openstack-keystone`` on freenode):
-
-    https://wiki.openstack.org/wiki/IRC
-
-For information on contributing to Keystone, see ``CONTRIBUTING.rst``.
+The purpose of implementing this cache is to improve latency of requests to Keystone in environments that use read-only-LDAP.
